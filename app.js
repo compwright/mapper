@@ -37,13 +37,15 @@ google.maps.Polygon.prototype.onCoordinatesChanged = function(handler){
 angular.module('mapper', [
 	'ngMap',
 	'ngHandsontable',
-	'mgcrea.ngStrap.button'
+	'mgcrea.ngStrap.button',
+	'rt.debounce'
 ])
 
-.controller('plotter', ['$scope', '$filter', 'NgMap', function($scope, $filter, NgMap) {
+.controller('plotter', ['$scope', '$filter', 'debounce', 'NgMap', function($scope, $filter, debounce, NgMap) {
 	$scope.markers = [];
 	$scope.clusters = [];
 	$scope.map = {};
+	$scope.geocoder = new google.maps.Geocoder();
 
 	// map must initialize while visible
 	$scope.plotter = {
@@ -51,21 +53,55 @@ angular.module('mapper', [
 		print: false
 	};
 
+	// HandsOnTable afterChange() callback used to
+	// immediately geocode markers that don't have latitude and longitude
+	$scope.onInput = function() {
+		var needLatLng = $scope.markers.filter(function(marker) {
+			if (marker.address && (!marker.lat || !marker.lng) && !marker.promise) {
+				marker.$geocoded = 'pending';
+				return true;
+			}
+		});
+
+		if (!needLatLng.length) {
+			return;
+		}
+
+		var $scopeApplyDebounced = debounce(1000, function() {
+			$scope.$apply();
+		});
+
+		needLatLng.map(function(marker) {
+			var address = {
+				address: $filter('address')(marker)
+			};
+			$scope.geocoder.geocode(address, function(results, status) {
+				marker.$geocoded = status;
+				if (status === google.maps.GeocoderStatus.OK) {
+					marker.lat = results[0].geometry.location.lat();
+					marker.lng = results[0].geometry.location.lng();
+					$scopeApplyDebounced();
+				}
+			});
+		});
+	};
+
+	// Map initialized callback
 	NgMap.getMap().then(function(map) {
 
 		// when the map stops changing...
 		map.addListener('idle', function() {
-			// set the visibility flag on each marker
+			// set an $index flag and a reference to the Google map marker object
 			var i = 0;
 			angular.forEach(map.customMarkers, function(marker) {
-				if (!$scope.markers[i].position) {
+				if (!$scope.markers[i].$index) {
 					$scope.markers[i].$index = i;
-					$scope.markers[i].position = marker.getPosition();
+					$scope.markers[i].marker = marker;
 				}
 				i++;
 			});
 
-/*
+			/*
 			// do the chunking here, to avoid infinite digest looping
 			// https://groups.google.com/d/msg/angular/IEIQok-YkpU/InEXv61MrkMJ
 	    	$scope.chunkedMarkers = $filter('chunk')(
@@ -73,7 +109,7 @@ angular.module('mapper', [
 	    			return !!marker.visible;
 	    		})
 	    	);
-*/
+			*/
 
 			$scope.$apply();
 		});
@@ -82,10 +118,12 @@ angular.module('mapper', [
 		$scope.plotter.mode = 'input';
     });
 
+	// Map polygon drawing overlaycomplete() callback
+	// add a new cluster from the markers inside the polygon
 	$scope.onMapOverlayCompleted = function(e) {
 		function getMarkersInBounds(markers, bounds) {
 			return markers.filter(function(marker) {
-				return marker.position && bounds.contains(marker.position);
+				return !marker.$cluster && marker.marker && bounds.contains(marker.marker.getPosition());
 			});
 		}
 
@@ -95,6 +133,7 @@ angular.module('mapper', [
 			markers: getMarkersInBounds($scope.markers, polygon.getBounds())
 		};
 
+		// update the cluster if the polygon is edited or moved
 		polygon.onCoordinatesChanged(function() {
 			cluster.markers = getMarkersInBounds($scope.markers, polygon.getBounds());
 			$scope.$apply();
@@ -108,6 +147,26 @@ angular.module('mapper', [
 		angular.element(td).css({ textAlign: 'center' });
 	};
 }])
+
+.filter('address', function() {
+	return function(marker) {
+		if (marker.address && marker.city && marker.state && marker.zip) {
+			return marker.address + ', ' + marker.city + ', ' + marker.state + ' ' + marker.zip;
+		} else {
+			return '';
+		}
+	};
+})
+
+.filter('latlng', function() {
+	return function(marker) {
+		if (marker.lat && marker.lng) {
+			return [ marker.lat, marker.lng ].join(',');
+		} else {
+			return '';
+		}
+	};
+})
 
 // don't use with ngRepeat
 .filter('chunk', function() {

@@ -30,7 +30,7 @@
     </div>
   </nav>
   <section ng-if="plotter.mode == 'input'">
-    <hot-table stretch-h="'all'" datarows="markers" min-rows="25" min-spare-rows="3">
+    <hot-table stretch-h="'all'" datarows="markers" min-rows="25" min-spare-rows="3" on-after-change="onInput()">
       <hot-column data="$index" title="'#'" type="'numeric'" width="'30px'" renderer="indexRenderer"></hot-column>
       <hot-column data="lat" title="'Latitude'" type="'numeric'" format="'0.0000000'" width="'70px'"></hot-column>
       <hot-column data="lng" title="'Longitude'" type="'numeric'" format="'0.0000000'" width="'70px'"></hot-column>
@@ -44,11 +44,11 @@
   <section ng-if="plotter.mode == 'cut'" ng-hide="plotter.print == true" class="fullscreen">
     <ng-map
         class="map"
-        center="[41, -87]" zoom="13"
+        center="[41,-87]" zoom="3"
         zoom-to-include-markers="auto"
         map-type-control="false"
         street-view-control="false">
-      <custom-marker ng-repeat="m in markers" ng-if="m.lat && m.lng" position="{{m.lat}}, {{m.lng}}" id="custom-marker-{{$index}}"
+      <custom-marker ng-repeat="m in markers" ng-if="m.address" position="{{ m | latlng }}" id="custom-marker-{{$index}}"
           on-click="return false;showInfoWindow('infoWindow', 'custom-marker-'+$index, m)">
         <div class="marker">{{m.$index + 1}}</div>
       </custom-marker>
@@ -69,8 +69,8 @@
           zoom-to-include-markers="auto"
           map-type-control="false"
           street-view-control="false">
-        <custom-marker ng-repeat="m in cluster.markers" ng-if="m.lat && m.lng" position="{{m.lat}}, {{m.lng}}" id="custom-marker-{{$index}}">
           <div class="marker">{{m.$index + 1}}</div>
+        <custom-marker ng-repeat="m in cluster.markers" ng-if="m.address" position="{{ m | latlng }}" id="custom-marker-{{$index}}">
         </custom-marker>
       </ng-map>
       <table class="table table-condensed table-bordered table-striped">
