@@ -139,9 +139,17 @@ angular.module('mapper', [
 			$scope.$apply();
 		});
 
+		// set a cluster index flag
+		var i = $scope.clusters.length;
+		cluster.markers.map(function(marker) {
+			marker.$cluster = i;
+			marker.$class = 'cluster-' + (1 + (i % 12));
+		});
+
 		$scope.clusters.push(cluster);
 	};
 
+	// HandsOnTable index column renderer
     $scope.indexRenderer = function(hotInstance, td, row, col, prop, value, cellProperties) {
 		td.innerHTML = row + 1;
 		angular.element(td).css({ textAlign: 'center' });

@@ -80,8 +80,8 @@ $pageMargin: 0.25in;
 	display: inline-block;
 	@include border-radius(12px);
 	@include box-shadow(1px 1px 2px rgba(0, 0, 0, 0.5) !important);
-	background: red !important;
-	color: white !important;
+	background: lavender !important;
+	color: black !important;
 	font-weight: bold;
 	text-align: center;
 	width: 25px;
@@ -89,4 +89,18 @@ $pageMargin: 0.25in;
 	line-height: 25px;
 	font-size: 14px;
 }
+
+// colors by http://colorbrewer2.org
+.marker.cluster-1 { background-color: #8dd3c7 !important; }
+.marker.cluster-2 { background-color: #ffffb3 !important; }
+.marker.cluster-3 { background-color: #bebada !important; }
+.marker.cluster-4 { background-color: #fb8072 !important; }
+.marker.cluster-5 { background-color: #80b1d3 !important; }
+.marker.cluster-6 { background-color: #fdb462 !important; }
+.marker.cluster-7 { background-color: #b3de69 !important; }
+.marker.cluster-8 { background-color: #fccde5 !important; }
+.marker.cluster-9 { background-color: #d9d9d9 !important; }
+.marker.cluster-10 { background-color: #bc80bd !important; }
+.marker.cluster-11 { background-color: #ccebc5 !important; }
+.marker.cluster-12 { background-color: #ffed6f !important; }
 

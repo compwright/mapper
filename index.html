@@ -14,6 +14,7 @@
   <script src="bower_components/angular-strap/dist/angular-strap.min.js"></script>
   <script src="bower_components/ngmap/build/scripts/ng-map.min.js"></script>
   <script src="bower_components/ngHandsontable/dist/ngHandsontable.min.js"></script>
+  <script src="bower_components/angular-debounce/dist/angular-debounce.min.js"></script>
   <script src="app.js"></script>
 </head>
 <body ng-controller="plotter">
@@ -50,7 +51,7 @@
         street-view-control="false">
       <custom-marker ng-repeat="m in markers" ng-if="m.address" position="{{ m | latlng }}" id="custom-marker-{{$index}}"
           on-click="return false;showInfoWindow('infoWindow', 'custom-marker-'+$index, m)">
-        <div class="marker">{{m.$index + 1}}</div>
+        <div class="marker" ng-class="m.$class">{{m.$index + 1}}</div>
       </custom-marker>
       <drawing-manager
         on-overlaycomplete="onMapOverlayCompleted()"
@@ -69,8 +70,8 @@
           zoom-to-include-markers="auto"
           map-type-control="false"
           street-view-control="false">
-          <div class="marker">{{m.$index + 1}}</div>
         <custom-marker ng-repeat="m in cluster.markers" ng-if="m.address" position="{{ m | latlng }}" id="custom-marker-{{$index}}">
+          <div class="marker" ng-class="m.$class">{{m.$index + 1}}</div>
         </custom-marker>
       </ng-map>
       <table class="table table-condensed table-bordered table-striped">
