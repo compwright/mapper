@@ -1,0 +1,52 @@
+{
+  "name": "mapper",
+  "version": "1.0.0",
+  "description": "Print a map with a list of destinations",
+  "main": "app.js",
+  "engines": {
+    "node": "~8.5.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --hide-modules",
+    "analyze": "webpack --config webpack-analyze.config.js --hide-modules",
+    "build:prod": "NODE_ENV=production webpack --hide-modules --optimize-minimize",
+    "start": "webpack-dev-server --open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/compwright/mapper.git"
+  },
+  "author": "Jonathon Hill <jhill9693@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/compwright/mapper/issues"
+  },
+  "homepage": "https://github.com/compwright/mapper#readme",
+  "dependencies": {
+    "angular": "^1.6.6",
+    "angular-debounce": "^1.1.0",
+    "angular-strap": "^2.3.12",
+    "bootstrap-sass": "^3.3.7",
+    "compass-mixins": "^0.12.10",
+    "font-awesome-sass": "^4.7.0",
+    "handsontable": "^0.34.4",
+    "ng-handsontable": "^0.13.0",
+    "ngmap": "^1.18.4"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^0.1.17",
+    "config": "^1.26.2",
+    "css-loader": "^0.28.7",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "html-webpack-plugin": "^2.30.1",
+    "node-sass": "^4.5.3",
+    "prettier": "^1.7.0",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.6.0",
+    "webpack-bundle-analyzer": "^2.9.0",
+    "webpack-dev-server": "^2.8.2"
+  }
+}

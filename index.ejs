@@ -1,22 +1,12 @@
 <!doctype html>
 <html ng-app="mapper">
+
 <head>
   <title>Mapper</title>
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-
-  <link rel="stylesheet" href="assets/stylesheets/main.css">
-  <link rel="stylesheet" media="screen" href="bower_components/handsontable/dist/handsontable.full.css">
-
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGHjNRaV99gbLoKbFnIv4sYZAseMlpuCc&libraries=drawing,geometry"></script>
-  <script src="bower_components/google-maps-point-in-polygon/maps.google.polygon.containsLatLng.js"></script>
-  <script src="bower_components/handsontable/dist/handsontable.full.js"></script>
-  <script src="bower_components/angular/angular.min.js"></script>
-  <script src="bower_components/angular-strap/dist/angular-strap.min.js"></script>
-  <script src="bower_components/ngmap/build/scripts/ng-map.min.js"></script>
-  <script src="bower_components/ngHandsontable/dist/ngHandsontable.min.js"></script>
-  <script src="bower_components/angular-debounce/dist/angular-debounce.min.js"></script>
-  <script src="app.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=<%= htmlWebpackPlugin.options.GOOGLE_API_KEY %>&libraries=drawing,geometry"></script>
 </head>
+
 <body ng-controller="plotter">
   <nav class="navbar navbar-default navbar-static-top">
     <div class="container-fluid">
@@ -43,33 +33,17 @@
     </hot-table>
   </section>
   <section ng-if="plotter.mode == 'cut'" ng-hide="plotter.print == true" class="fullscreen">
-    <ng-map
-        class="map"
-        center="[41,-87]" zoom="3"
-        zoom-to-include-markers="auto"
-        map-type-control="false"
-        street-view-control="false">
-      <custom-marker ng-repeat="m in markers" ng-if="m.address" position="{{ m | latlng }}" id="custom-marker-{{$index}}"
-          on-click="return false;showInfoWindow('infoWindow', 'custom-marker-'+$index, m)">
+    <ng-map class="map" center="[41,-87]" zoom="3" zoom-to-include-markers="auto" map-type-control="false" street-view-control="false">
+      <custom-marker ng-repeat="m in markers" ng-if="m.address" position="{{ m | latlng }}" id="custom-marker-{{$index}}" on-click="return false;showInfoWindow('infoWindow', 'custom-marker-'+$index, m)">
         <div class="marker" ng-class="m.$class">{{m.$index + 1}}</div>
       </custom-marker>
-      <drawing-manager
-        on-overlaycomplete="onMapOverlayCompleted()"
-        drawing-control-options="{ position: 'TOP_CENTER', drawingModes: [ 'polygon' ] }"
-        drawingControl="true"
-        drawingMode="null"
-        polygonOptions="{ editable: true, draggable: true }"
-      </drawing-manager>
+      <drawing-manager on-overlaycomplete="onMapOverlayCompleted()" drawing-control-options="{ position: 'TOP_CENTER', drawingModes: [ 'polygon' ] }"
+        drawingControl="true" drawingMode="null" polygonOptions="{ editable: true, draggable: true }" </drawing-manager>
     </ng-map>
   </section>
   <section class="page" ng-if="plotter.print">
     <article ng-repeat="cluster in clusters">
-      <ng-map
-          class="map"
-          center="[41,-87]" zoom="3"
-          zoom-to-include-markers="auto"
-          map-type-control="false"
-          street-view-control="false">
+      <ng-map class="map" center="[41,-87]" zoom="3" zoom-to-include-markers="auto" map-type-control="false" street-view-control="false">
         <custom-marker ng-repeat="m in cluster.markers" ng-if="m.address" position="{{ m | latlng }}" id="custom-marker-{{$index}}">
           <div class="marker" ng-class="m.$class">{{m.$index + 1}}</div>
         </custom-marker>
@@ -122,4 +96,5 @@
     </article>
   </section>
 </body>
+
 </html>

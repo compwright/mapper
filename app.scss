@@ -1,0 +1,185 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/normalize";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/print";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/glyphicons";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/scaffolding";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/type";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/code";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/grid";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/tables";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/forms";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/buttons";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/component-animations";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/dropdowns";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/button-groups";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/input-groups";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/navs";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/navbar";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/breadcrumbs";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/pagination";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/pager";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/labels";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/badges";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/jumbotron";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/thumbnails";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/alerts";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/progress-bars";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/media";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/list-group";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/panels";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-embed";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/wells";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/close";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/modals";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/tooltip";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/popovers";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/carousel";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/utilities";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-utilities";
+
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/variables";
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/mixins";
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/path";
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/core";
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/larger";
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/fixed-width";
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/list";
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/bordered-pulled";
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/animated";
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/rotated-flipped";
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/stacked";
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/icons";
+//@import "~font-awesome-sass/assets/stylesheets/font-awesome/screen-reader";
+
+@import "~compass-mixins/lib/compass/css3";
+
+@import "~handsontable/dist/handsontable.css";
+
+html,
+body {
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.navbar {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+$pageWidth: 11in;
+$pageHeight: 8.5in;
+$pageMargin: 0.25in;
+
+@media print {
+  @page {
+    size: landscape;
+  }
+
+  .navbar,
+  .gm-style-cc,
+  .gm-style > div > a::after {
+    display: none;
+  }
+
+  /* fixes Google map tile printing - http://stackoverflow.com/a/21396697/168815 */
+  .map img {
+    max-width: none !important;
+    box-shadow: none !important;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  th,
+  td {
+    white-space: nowrap;
+    font-size: 12px;
+  }
+}
+
+.fullscreen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin-top: -50px;
+  padding-top: 50px;
+
+  .map {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.page {
+  min-height: $pageHeight - (2 * $pageMargin);
+  width: $pageWidth - (2 * $pageMargin);
+  margin: auto;
+
+  .map {
+    height: $pageHeight - (2 * $pageMargin);
+    width: $pageWidth - (2 * $pageMargin);
+    margin-bottom: 0.25in;
+    page-break-after: always;
+  }
+
+  .table {
+    page-break-after: always;
+  }
+}
+
+.marker {
+  display: inline-block;
+  @include border-radius(12px);
+  @include box-shadow(1px 1px 2px rgba(0, 0, 0, 0.5) !important);
+  background: lavender !important;
+  color: black !important;
+  font-weight: bold;
+  text-align: center;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  font-size: 14px;
+}
+
+// colors by http://colorbrewer2.org
+.marker.cluster-1 {
+  background-color: #8dd3c7 !important;
+}
+.marker.cluster-2 {
+  background-color: #ffffb3 !important;
+}
+.marker.cluster-3 {
+  background-color: #bebada !important;
+}
+.marker.cluster-4 {
+  background-color: #fb8072 !important;
+}
+.marker.cluster-5 {
+  background-color: #80b1d3 !important;
+}
+.marker.cluster-6 {
+  background-color: #fdb462 !important;
+}
+.marker.cluster-7 {
+  background-color: #b3de69 !important;
+}
+.marker.cluster-8 {
+  background-color: #fccde5 !important;
+}
+.marker.cluster-9 {
+  background-color: #d9d9d9 !important;
+}
+.marker.cluster-10 {
+  background-color: #bc80bd !important;
+}
+.marker.cluster-11 {
+  background-color: #ccebc5 !important;
+}
+.marker.cluster-12 {
+  background-color: #ffed6f !important;
+}

@@ -1,2 +1,4 @@
-.sass-cache
-bower_components
+config/development.*
+config/local.*
+dist
+node_modules
