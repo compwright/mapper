@@ -1,0 +1,100 @@
+<!doctype html>
+<html ng-app="mapper">
+
+<head>
+  <title>Mapper</title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxsPIS-OoVcZjlI53DQsRCJpL0l0FnUHo&libraries=drawing,geometry"></script>
+<link href="assets/bundle.css?765f6e5381e2bb819b34" rel="stylesheet"></head>
+
+<body ng-controller="plotter">
+  <nav class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <span class="navbar-brand">Mapper</span>
+        <div class="btn-group navbar-btn" ng-model="plotter.mode" bs-radio-group>
+          <label class="btn btn-default"><input type="radio" class="btn btn-default" value="input"> Input</label>
+          <label class="btn btn-default"><input type="radio" class="btn btn-default" value="cut"> Cut</label>
+        </div>
+        <button type="button" class="btn btn-default navbar-button" ng-model="plotter.print" bs-checkbox>Print</button>
+      </div>
+    </div>
+  </nav>
+  <section ng-if="plotter.mode == 'input'">
+    <hot-table stretch-h="'all'" datarows="markers" min-rows="25" min-spare-rows="3" on-after-change="onInput()">
+      <hot-column data="$index" title="'#'" type="'numeric'" width="'30px'" renderer="indexRenderer"></hot-column>
+      <hot-column data="lat" title="'Latitude'" type="'numeric'" format="'0.0000000'" width="'70px'"></hot-column>
+      <hot-column data="lng" title="'Longitude'" type="'numeric'" format="'0.0000000'" width="'70px'"></hot-column>
+      <hot-column data="name" title="'Household'" width="'150px'"></hot-column>
+      <hot-column data="address" title="'Address'" width="'150px'"></hot-column>
+      <hot-column data="city" title="'City'" width="'100px'"></hot-column>
+      <hot-column data="state" title="'State'" width="'50px'"></hot-column>
+      <hot-column data="zip" title="'Zip'" width="'75px'"></hot-column>
+    </hot-table>
+  </section>
+  <section ng-if="plotter.mode == 'cut'" ng-hide="plotter.print == true" class="fullscreen">
+    <ng-map class="map" center="[41,-87]" zoom="3" zoom-to-include-markers="auto" map-type-control="false" street-view-control="false">
+      <custom-marker ng-repeat="m in markers" ng-if="m.address" position="{{ m | latlng }}" id="custom-marker-{{$index}}" on-click="return false;showInfoWindow('infoWindow', 'custom-marker-'+$index, m)">
+        <div class="marker" ng-class="m.$class">{{m.$index + 1}}</div>
+      </custom-marker>
+      <drawing-manager on-overlaycomplete="onMapOverlayCompleted()" drawing-control-options="{ position: 'TOP_CENTER', drawingModes: [ 'polygon' ] }"
+        drawingControl="true" drawingMode="null" polygonOptions="{ editable: true, draggable: true }" </drawing-manager>
+    </ng-map>
+  </section>
+  <section class="page" ng-if="plotter.print">
+    <article ng-repeat="cluster in clusters">
+      <ng-map class="map" center="[41,-87]" zoom="3" zoom-to-include-markers="auto" map-type-control="false" street-view-control="false">
+        <custom-marker ng-repeat="m in cluster.markers" ng-if="m.address" position="{{ m | latlng }}" id="custom-marker-{{$index}}">
+          <div class="marker" ng-class="m.$class">{{m.$index + 1}}</div>
+        </custom-marker>
+      </ng-map>
+      <table class="table table-condensed table-bordered table-striped">
+        <colgroup>
+          <col style="width:30px">
+          <col style="width:150px">
+          <col style="width:150px">
+          <col style="width:100px">
+          <col style="width:75px">
+          <col style="width:75px">
+          <col style="width:75px">
+          <col style="width:75px">
+          <col style="width:75px">
+          <col style="width:75px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th rowspan="2" class="text-center">#</th>
+            <th rowspan="2" class="text-center">Household</th>
+            <th rowspan="2" class="text-center">Address</th>
+            <th rowspan="2" class="text-center">City</th>
+            <th colspan="6" class="text-center">Response</th>
+          </tr>
+          <tr>
+            <th class="text-center">Vacant</th>
+            <th class="text-center">Away</th>
+            <th class="text-center">Refused</th>
+            <th class="text-center">Undecided</th>
+            <th class="text-center">Supporter</th>
+            <th class="text-center">Sign</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="marker in cluster.markers">
+            <td ng-bind="marker.$index + 1"></td>
+            <td ng-bind="marker.name"></td>
+            <td ng-bind="marker.address"></td>
+            <td ng-bind="marker.city"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+  </section>
+<script type="text/javascript" src="assets/bundle.js?765f6e5381e2bb819b34"></script></body>
+
+</html>
