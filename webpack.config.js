@@ -11,7 +11,7 @@ const extractSass = new ExtractTextPlugin({
 })
 
 module.exports = {
-  entry: './app.js',
+  entry: path.resolve(__dirname, 'src', 'app.js'),
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'assets/bundle.js'
@@ -20,6 +20,17 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.js$/,
+        exclude: /(node_modules)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['env'],
+            plugins: ['transform-runtime', 'transform-object-rest-spread']
+          }
+        }
+      },
+      {
         test: /\.scss$/,
         use: extractSass.extract({
           use: ['css-loader', 'sass-loader'],
@@ -27,8 +38,15 @@ module.exports = {
         })
       },
       {
-        test: /\.(woff|woff2|eot|ttf|otf)$/,
-        use: ['file-loader']
+        test: /\.(woff|woff2|eot|ttf|otf|svg)$/,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'assets/',
+            publicPath: '/'
+          }
+        }]
       }
     ]
   },
@@ -39,7 +57,7 @@ module.exports = {
     }),
     extractSass,
     new HtmlWebpackPlugin({
-      template: './index.ejs',
+      template: './src/index.ejs',
       filename: 'index.html',
       hash: true,
       ...JSON.parse(JSON.stringify(config))

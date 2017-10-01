@@ -1,7 +1,7 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/normalize";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/print";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/print";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/glyphicons";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/scaffolding";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/type";
@@ -24,7 +24,7 @@
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/jumbotron";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/thumbnails";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/alerts";
-//@import "~bootstrap-sass/assets/stylesheets/bootstrap/progress-bars";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/progress-bars";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/media";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/list-group";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/panels";
@@ -38,10 +38,11 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/utilities";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-utilities";
 
-//@import "~font-awesome-sass/assets/stylesheets/font-awesome/variables";
-//@import "~font-awesome-sass/assets/stylesheets/font-awesome/mixins";
-//@import "~font-awesome-sass/assets/stylesheets/font-awesome/path";
-//@import "~font-awesome-sass/assets/stylesheets/font-awesome/core";
+$fa-font-path: "~font-awesome-sass/assets/fonts/font-awesome/";
+@import "~font-awesome-sass/assets/stylesheets/font-awesome/variables";
+@import "~font-awesome-sass/assets/stylesheets/font-awesome/mixins";
+@import "~font-awesome-sass/assets/stylesheets/font-awesome/path";
+@import "~font-awesome-sass/assets/stylesheets/font-awesome/core";
 //@import "~font-awesome-sass/assets/stylesheets/font-awesome/larger";
 //@import "~font-awesome-sass/assets/stylesheets/font-awesome/fixed-width";
 //@import "~font-awesome-sass/assets/stylesheets/font-awesome/list";
@@ -49,7 +50,7 @@
 //@import "~font-awesome-sass/assets/stylesheets/font-awesome/animated";
 //@import "~font-awesome-sass/assets/stylesheets/font-awesome/rotated-flipped";
 //@import "~font-awesome-sass/assets/stylesheets/font-awesome/stacked";
-//@import "~font-awesome-sass/assets/stylesheets/font-awesome/icons";
+@import "~font-awesome-sass/assets/stylesheets/font-awesome/icons";
 //@import "~font-awesome-sass/assets/stylesheets/font-awesome/screen-reader";
 
 @import "~compass-mixins/lib/compass/css3";
@@ -61,6 +62,12 @@ body {
   height: 100%;
 }
 
+spreadsheet-view,
+map-view,
+print-view {
+  display: block
+}
+
 * {
   box-sizing: border-box;
 }
@@ -68,6 +75,10 @@ body {
 .navbar {
   margin-bottom: 0;
   border-bottom: none;
+
+  .progress {
+    margin-bottom: 0
+  }
 }
 
 $pageWidth: 11in;

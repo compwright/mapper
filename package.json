@@ -25,16 +25,25 @@
   "homepage": "https://github.com/compwright/mapper#readme",
   "dependencies": {
     "angular": "^1.6.6",
-    "angular-debounce": "^1.1.0",
     "angular-strap": "^2.3.12",
+    "babel-runtime": "^6.26.0",
     "bootstrap-sass": "^3.3.7",
     "compass-mixins": "^0.12.10",
+    "core-js": "^2.5.1",
     "font-awesome-sass": "^4.7.0",
     "handsontable": "^0.34.4",
+    "lodash.debounce": "^4.0.8",
     "ng-handsontable": "^0.13.0",
-    "ngmap": "^1.18.4"
+    "ngmap": "^1.18.4",
+    "rxjs": "^5.4.3",
+    "string-hash": "^1.1.3"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
     "clean-webpack-plugin": "^0.1.17",
     "config": "^1.26.2",
     "css-loader": "^0.28.7",
