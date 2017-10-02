@@ -5,8 +5,10 @@ import './app.scss'
 import './utils/polyfills'
 
 import angular from 'angular'
-import 'angular-debounce'
+import 'angular-strap/dist/modules/dimensions'
 import 'angular-strap/dist/modules/button'
+import 'angular-strap/dist/modules/tooltip'
+import 'angular-strap/dist/modules/popover'
 import 'ngmap'
 import 'ng-handsontable/dist/ngHandsontable'
 

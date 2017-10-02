@@ -23,14 +23,14 @@
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/badges";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/jumbotron";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/thumbnails";
-//@import "~bootstrap-sass/assets/stylesheets/bootstrap/alerts";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/alerts";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/progress-bars";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/media";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/list-group";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/panels";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-embed";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/wells";
-//@import "~bootstrap-sass/assets/stylesheets/bootstrap/close";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/close";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/modals";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/tooltip";
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap/popovers";
@@ -43,7 +43,7 @@ $fa-font-path: "~font-awesome-sass/assets/fonts/font-awesome/";
 @import "~font-awesome-sass/assets/stylesheets/font-awesome/mixins";
 @import "~font-awesome-sass/assets/stylesheets/font-awesome/path";
 @import "~font-awesome-sass/assets/stylesheets/font-awesome/core";
-//@import "~font-awesome-sass/assets/stylesheets/font-awesome/larger";
+@import "~font-awesome-sass/assets/stylesheets/font-awesome/larger";
 //@import "~font-awesome-sass/assets/stylesheets/font-awesome/fixed-width";
 //@import "~font-awesome-sass/assets/stylesheets/font-awesome/list";
 //@import "~font-awesome-sass/assets/stylesheets/font-awesome/bordered-pulled";
@@ -64,7 +64,11 @@ body {
 
 spreadsheet-view,
 map-view,
-print-view {
+print-view,
+progress-bar,
+notification,
+geocode-progress,
+notification-overlay {
   display: block
 }
 
@@ -75,9 +79,34 @@ print-view {
 .navbar {
   margin-bottom: 0;
   border-bottom: none;
+}
+
+.notification {
+  border-radius: 6px;
+  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+  box-shadow: 0 5px 10px rgba(0,0,0,.2);
 
   .progress {
-    margin-bottom: 0
+    margin-top: 5px
+  }
+}
+
+.notification-list {
+  position: fixed;
+  top: 33px;
+  right: 33px;
+  width: 340px;
+  margin-left: 10px;
+  z-index: 1000;
+
+  .popover {
+    position: relative;
+    margin-bottom: 10px;
+    top: initial;
+    right: initial;
+    bottom: initial;
+    left: initial;
+    margin-left: 0;
   }
 }
 
