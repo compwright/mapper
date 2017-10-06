@@ -47,12 +47,4 @@ controller.$inject = ['$rootScope', '$timeout']
 export const template = `
   <progress-bar ng-if="!$ctrl.error" style="width: 100%" value="$ctrl.value"></progress-bar>
   <progress-bar ng-if="$ctrl.error" style="width: 100%" value="{danger: 100}" message="{danger: $ctrl.error}"></progress-bar>
-  <div>
-    <button ng-if="$ctrl.error" type="button" class="btn btn-default" ng-click="$ctrl.retry()" title="Retry">
-      Retry
-    </button>
-    <button ng-if="$ctrl.finished" type="button" class="btn btn-default" ng-click="$ctrl.$parent.close()" title="Close">
-      Close
-    </button>
-  </div>
 `

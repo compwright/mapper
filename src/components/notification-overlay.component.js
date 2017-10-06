@@ -37,7 +37,7 @@ controller.$inject = []
 export const template = `
   <section class="notification-list">
     <notification ng-repeat="n in $ctrl.notifications | orderBy:'$index':true" title="n.title"
-        type="n.type" duration="n.duration" allow-close="n.allowClose" on-close="$ctrl.close(n)">
+        type="n.type" duration="n.duration" allow-close="n.allowClose" on-close="$ctrl.close(n)" actions="n.actions">
       <div ng-if="n.content" ng-bind="n.content"></div>
       <geocode-progress ng-if="n.component === 'geocode-progress'" progress="n.progress"></geocode-progress>
     </notification> 

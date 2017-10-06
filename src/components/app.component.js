@@ -16,6 +16,13 @@ import immutableClone from '../utils/immutable/array/clone'
 import immutableSet from '../utils/immutable/object/set'
 import immutableCloneObject from '../utils/immutable/object/clone'
 import ClusterManager from '../utils/cluster/manager'
+import { hasSomeKeys, hasAllKeys } from '../utils/validation'
+
+const addressFields = ['address', 'city', 'state', 'zip']
+const coordinatesFields = ['lat', 'lng']
+const hasAddress = hasAllKeys(...addressFields)
+const hasSomeAddress = hasSomeKeys(...addressFields)
+const hasCoordinates = hasAllKeys(...coordinatesFields)
 
 export function controller(geocoder, $rootScope, $timeout) {
   const $ctrl = this
@@ -25,7 +32,10 @@ export function controller(geocoder, $rootScope, $timeout) {
   this.clusters = []
 
   const clusterManager = new ClusterManager(this.markers)
-  clusterManager.subscribe(clusters => (this.clusters = clusters))
+  clusterManager.subscribe(clusters => {
+    this.clusters = clusters
+    $applyDebounced()
+  })
 
   this.state = {
     step: 'cut', // 'input', 'cut'
@@ -49,14 +59,25 @@ export function controller(geocoder, $rootScope, $timeout) {
   }
 
   this.updateMarker = ($event, $index, $change) => {
-    const marker = immutableSet(this.markers[$index], { ...$change, $index })
+    const changes = immutableSet($change, { $index })
+    const needsGeocode = hasSomeAddress($change)
+    const marker = immutableSet(this.markers[$index], changes)
+
+    if (needsGeocode) {
+      marker.$geocodeStatus = 'refresh'
+      delete marker.lat
+      delete marker.lng
+    }
+
     this.setMarker(marker)
-    this.geocode()
+
+    if (needsGeocode) {
+      this.geocode()
+    }
   }
 
   this.addCluster = polygon => {
     const clusterIndex = clusterManager.add(polygon)
-    $applyDebounced()
 
     // Refresh the cluster markers if the polygon is edited or moved
     polygon.onCoordinatesChanged(function() {
@@ -68,40 +89,56 @@ export function controller(geocoder, $rootScope, $timeout) {
   this.geocode = debounce(() => {
     // Find the markers that need to be geocoded
     const geocode = this.markers.filter(
-      ({ $index, address, city, state, zip, lat, lng, $geocodeStatus }) =>
-        typeof $index === 'number' &&
-        address && address !== '' &&
-        city && city !== '' &&
-        state && state !== '' &&
-        zip && zip !== '' &&
-        $geocodeStatus !== 'pending' &&
-        (!lat || !lng)
+      marker =>
+        typeof marker.$index === 'number' &&
+        marker.$geocodeStatus !== 'pending' &&
+        hasAddress(marker) &&
+        !hasCoordinates(marker)
     )
 
     if (geocode.length === 0) return
 
-    // Activate the loading icons in the lat/lng cells
-    geocode.forEach(marker => this.setMarker({ ...marker, $geocodeStatus: 'pending' }))
+    // Set the geocoding status for the UI
+    geocode.forEach(marker =>
+      this.setMarker(immutableSet(marker, '$geocodeStatus', 'pending'))
+    )
 
-    const operations = Observable.of(geocode)
+    // Just observe the marker indexes, since the user could change an address field at any time
+    const markerIndexes = geocode.map(marker => marker.$index)
+
+    const operations = Observable.of(markerIndexes)
       .mergeAll()
-      .concatMap(value => Observable.of(value).delay(350)) // rate limit at 3 per second
-      .map(marker => {
-        const address = addressFilter(marker)
-        return Observable.fromPromise(geocoder({ address }))
-          .map(coordinates => immutableSet(marker, {
-            ...coordinates,
-            $geocodeStatus: 'successful'
-          }))
+      .concatMap(value => Observable.of(value).delay(250)) // rate limit at 2 per second
+      .map($index => {
+        // marker => 'street, city, state zip'
+        const address = addressFilter(this.markers[$index])
+
+        return Observable.fromPromise(geocoder(address))
+          .map(geocodeResult => {
+            // Discard result if the address changed
+            if (geocodeResult.address !== address) {
+              return immutableSet(
+                this.markers[$index],
+                '$geocodeStatus',
+                'refresh'
+              )
+            }
+
+            return immutableSet(this.markers[$index], {
+              lat: geocodeResult.lat,
+              lng: geocodeResult.lng,
+              $geocodeStatus: 'successful'
+            })
+          })
           .catch(error => {
             if (error.message === google.maps.GeocoderStatus.ZERO_RESULTS) {
-              error.marker = immutableSet(marker, {
+              error.marker = immutableSet(this.markers[$index], {
                 $geocodeStatus: 'error',
                 $geocodeError: error.message
               })
               return Observable.of(error)
             } else {
-              error.marker = marker
+              error.marker = this.markers[$index]
               return Observable.throw(error)
             }
           })
@@ -113,20 +150,30 @@ export function controller(geocoder, $rootScope, $timeout) {
         this.setMarker(marker instanceof Error ? marker.marker : marker)
       },
       error: error => {
-        // Clear the pending status of any markers we didn't get to since the observable has stopped
-        this.markers.filter(({ $geocodeStatus }) => $geocodeStatus === 'pending')
-          .map(immutableCloneObject)
-          .forEach(marker => {
-            delete marker.$geocodeStatus
-            this.setMarker(marker)
-          })
+        // Since the observable stopped due to an error, we need to
+        // reset the status of any markers that didn't get geocoded
+        // so they will be picked up on the next geocode run
+        this.markers
+          .filter(({ $geocodeStatus }) => $geocodeStatus === 'pending')
+          .forEach(marker =>
+            this.setMarker(immutableSet(marker, '$geocodeStatus', 'refresh'))
+          )
 
         this.addNotification({
           type: 'danger',
           title: 'Geocode error:',
-          content: error.message
+          content: error.message,
+          actions: [
+            {
+              title: 'Retry',
+              text: 'Retry',
+              closeNotification: true,
+              onClick: this.geocode.bind(this)
+            }
+          ]
         })
-      }
+      },
+      complete: () => $applyDebounced()
     })
 
     this.addNotification({

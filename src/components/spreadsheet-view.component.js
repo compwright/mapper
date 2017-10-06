@@ -23,7 +23,7 @@ export const template = `
     <hot-column data="address" title="'Address'" width="'150px'"></hot-column>
     <hot-column data="city" title="'City'" width="'100px'"></hot-column>
     <hot-column data="state" title="'State'" width="'50px'"></hot-column>
-    <hot-column data="zip" title="'Zip'" width="'75px'"></hot-column>
+    <hot-column data="zip" title="'Zip'" type="'numeric'" format="'00000'" width="'75px'"></hot-column>
     <hot-column data="lat" title="'Latitude'" type="'numeric'" format="'0.0000000'" width="'70px'" renderer="$ctrl.geocodeProgressRenderer"></hot-column>
     <hot-column data="lng" title="'Longitude'" type="'numeric'" format="'0.0000000'" width="'70px'" renderer="$ctrl.geocodeProgressRenderer"></hot-column>
   </hot-table>

@@ -3,6 +3,7 @@ export const bindings = {
   type: '<',
   duration: '<',
   allowClose: '<',
+  actions: '<',
   onClose: '&'
 }
 
@@ -30,6 +31,13 @@ export function controller($timeout) {
   this.close = () => {
     this.onClose()
   }
+  
+  this.perform = (action) => {
+    if (action.closeNotification) {
+      this.close()
+    }
+    action.onClick()
+  }
 }
 
 controller.$inject = ['$timeout']
@@ -41,5 +49,7 @@ export const template = `
     </button>
     <b ng-if="$ctrl.title" ng-bind="$ctrl.title"></b>
     <ng-transclude></ng-transclude>
+    <a ng-repeat="action in $ctrl.actions" class="alert-link" href="" ng-click="$ctrl.perform(action)"
+        title="{{ action.title }}" ng-bind="action.text"></a>
   </article>
 `

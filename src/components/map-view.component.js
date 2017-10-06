@@ -6,7 +6,9 @@ function controller(NgMap) {
     this.onReady({ $map: map })
   })
 
-  this.onOverlayComplete = (e) => this.onDraw({ $polygon: e.overlay })
+  this.onOverlayComplete = (e) => {
+    this.onDraw({ $polygon: e.overlay })
+  }
 }
 
 controller.$inject = ['NgMap']
@@ -25,6 +27,6 @@ export const template = `
       <div class="marker" ng-class="m.$class">{{m.$index + 1}}</div>
     </custom-marker>
     <drawing-manager on-overlaycomplete="$ctrl.onOverlayComplete()" drawing-control-options="{ position: 'TOP_CENTER', drawingModes: [ 'polygon' ] }"
-      drawingControl="true" drawingMode="null" polygonOptions="{ editable: true, draggable: true }"></drawing-manager>
+        drawingControl="true" drawingMode="null" polygonOptions="{ editable: true, draggable: true }"></drawing-manager>
   </ng-map>
 `
