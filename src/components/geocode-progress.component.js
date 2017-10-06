@@ -13,7 +13,7 @@ export function controller($rootScope, $timeout) {
   const $applyDebounced = debounce($rootScope.$apply.bind($rootScope), 100)
 
   this.$onInit = () => {
-    this.progress.subscribe({
+    const subscription = this.progress.subscribe({
       next: ({ completed, errors, total }) => {
         this.value = {
           success: 100 * completed / total,
@@ -25,17 +25,20 @@ export function controller($rootScope, $timeout) {
         }
         $applyDebounced()
       },
-      catch: (error) => {
-        this.error = error
-        this.finished = true
+      error: (error) => {
+        subscription.unsubscribe()
+        this.$parent.close()
         $applyDebounced()
+      },
+      complete: () => {
+        this.finished = true
       }
     })
   }
 
   this.retry = () => {
     this.$app.geocode()
-    this.$parent.closeImmediately()
+    this.$parent.close()
   }
 }
 
@@ -48,7 +51,7 @@ export const template = `
     <button ng-if="$ctrl.error" type="button" class="btn btn-default" ng-click="$ctrl.retry()" title="Retry">
       Retry
     </button>
-    <button ng-if="$ctrl.finished" type="button" class="btn btn-default" ng-click="$ctrl.retry()" title="Retry">
+    <button ng-if="$ctrl.finished" type="button" class="btn btn-default" ng-click="$ctrl.$parent.close()" title="Close">
       Close
     </button>
   </div>

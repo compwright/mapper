@@ -1,5 +1,6 @@
 export const bindings = {
   title: '<',
+  type: '<',
   duration: '<',
   allowClose: '<',
   onClose: '&'
@@ -8,9 +9,21 @@ export const bindings = {
 export const transclude = true
 
 export function controller($timeout) {
-  this.$onInit = () => {
+  this.$onChanges = () => {
+    this.classes = [
+      'alert-' + (this.type || 'info')
+    ]
+
+    if (this.allowClose !== false && !this.duration) {
+      this.showCloseButton = true
+      this.classes.push('alert-dismissable')
+    }
+
     if (this.duration > 0) {
-      $timeout(() => this.close(), this.duration)
+      if (this.timer) {
+        $timeout.cancel(this.timer)
+      }
+      this.timer = $timeout(() => this.close(), this.duration)
     }
   }
 
@@ -22,8 +35,10 @@ export function controller($timeout) {
 controller.$inject = ['$timeout']
 
 export const template = `
-  <article class="notification alert alert-info fade in" ng-class="{'alert-dismissible': !$ctrl.duration && $ctrl.allowClose !== false}">
-    <button type="button" class="close" ng-hide="$ctrl.duration > 0 || $ctrl.allowClose === false" ng-click="$ctrl.close()"><i class="fa fa-times"></i></button>
+  <article class="notification alert alert-info fade in" ng-class="$ctrl.classes">
+    <button type="button" class="close" ng-show="$ctrl.showCloseButton" ng-click="$ctrl.close()">
+      <i class="fa fa-times"></i>
+    </button>
     <b ng-if="$ctrl.title" ng-bind="$ctrl.title"></b>
     <ng-transclude></ng-transclude>
   </article>

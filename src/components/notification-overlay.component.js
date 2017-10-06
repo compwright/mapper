@@ -12,12 +12,23 @@ export function controller() {
     this.onReady({ $controller: this })
   }
 
+  function createErrorNotification({ message }) {
+    return {
+      type: 'danger',
+      title: 'Error',
+      content: message
+    }
+  }
+
   this.push = (notification) => {
+    if (notification instanceof Error) {
+      notification = createErrorNotification(notification)
+    }
     this.notifications = immutablePush(this.notifications, notification)
   }
 
-  this.close = (index) => {
-    this.notifications = immutableRemove(this.notifications, index)
+  this.close = (notification) => {
+    this.notifications = immutableRemove(this.notifications, this.notifications.indexOf(notification))
   }
 }
 
@@ -26,7 +37,7 @@ controller.$inject = []
 export const template = `
   <section class="notification-list">
     <notification ng-repeat="n in $ctrl.notifications | orderBy:'$index':true" title="n.title"
-        duration="n.duration" allow-close="n.allowClose" on-close="$ctrl.close($index)">
+        type="n.type" duration="n.duration" allow-close="n.allowClose" on-close="$ctrl.close(n)">
       <div ng-if="n.content" ng-bind="n.content"></div>
       <geocode-progress ng-if="n.component === 'geocode-progress'" progress="n.progress"></geocode-progress>
     </notification> 

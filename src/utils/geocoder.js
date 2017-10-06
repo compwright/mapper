@@ -8,7 +8,7 @@ const geocoder = (address) => new Promise((resolve, reject) => {
         lng: results[0].geometry.location.lng()
       })
     } else {
-      reject(status)
+      reject(new Error(status))
     }
   })
 })

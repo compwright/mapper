@@ -57,6 +57,16 @@ $fa-font-path: "~font-awesome-sass/assets/fonts/font-awesome/";
 
 @import "~handsontable/dist/handsontable.css";
 
+$spinkit-spinner-margin: 0 auto;
+$spinkit-size: 16px;
+$spinkit-spinner-color: $brand-primary;
+
+@import "~spinkit/scss/spinners/7-three-bounce";
+
+.sk-three-bounce {
+  width: 100%;
+}
+
 html,
 body {
   height: 100%;
@@ -74,6 +84,10 @@ notification-overlay {
 
 * {
   box-sizing: border-box;
+}
+
+.handsontable tr.bg-danger td {
+  background-color: $state-danger-bg;
 }
 
 .navbar {

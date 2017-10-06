@@ -1,10 +1,12 @@
 import { Observable } from 'rxjs/Observable'
 import 'rxjs/add/observable/of'
 import 'rxjs/add/observable/fromPromise'
+import 'rxjs/add/observable/throw'
 import 'rxjs/add/operator/mergeAll'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/concatMap'
 import 'rxjs/add/operator/delay'
+import 'rxjs/add/operator/catch'
 import debounce from 'lodash.debounce'
 import { addressFilter } from '../filters/address.filter'
 import watchProgress from '../utils/promises-watcher'
@@ -12,6 +14,7 @@ import observeProgress from '../utils/progress-observer'
 import immutableSplice from '../utils/immutable/array/splice'
 import immutableClone from '../utils/immutable/array/clone'
 import immutableSet from '../utils/immutable/object/set'
+import immutableCloneObject from '../utils/immutable/object/clone'
 import ClusterManager from '../utils/cluster/manager'
 
 export function controller(geocoder, $rootScope, $timeout) {
@@ -32,6 +35,7 @@ export function controller(geocoder, $rootScope, $timeout) {
   this.attachNotifications = $notificationOverlayController => {
     this.addNotification = notification => {
       $notificationOverlayController.push(notification)
+      $applyDebounced()
     }
   }
 
@@ -64,41 +68,66 @@ export function controller(geocoder, $rootScope, $timeout) {
   this.geocode = debounce(() => {
     // Find the markers that need to be geocoded
     const geocode = this.markers.filter(
-      ({ $index, address, city, state, zip, lat, lng, $geocoded }) =>
-        $index !== null &&
-        $index !== undefined &&
-        address &&
-        city &&
-        state &&
-        zip &&
-        !$geocoded &&
+      ({ $index, address, city, state, zip, lat, lng, $geocodeStatus }) =>
+        typeof $index === 'number' &&
+        address && address !== '' &&
+        city && city !== '' &&
+        state && state !== '' &&
+        zip && zip !== '' &&
+        $geocodeStatus !== 'pending' &&
         (!lat || !lng)
     )
 
     if (geocode.length === 0) return
+
+    // Activate the loading icons in the lat/lng cells
+    geocode.forEach(marker => this.setMarker({ ...marker, $geocodeStatus: 'pending' }))
 
     const operations = Observable.of(geocode)
       .mergeAll()
       .concatMap(value => Observable.of(value).delay(350)) // rate limit at 3 per second
       .map(marker => {
         const address = addressFilter(marker)
-        const promise = geocoder({ address })
-          .then(coordinates => immutableSet(marker, coordinates))
+        return Observable.fromPromise(geocoder({ address }))
+          .map(coordinates => immutableSet(marker, {
+            ...coordinates,
+            $geocodeStatus: 'successful'
+          }))
           .catch(error => {
-            if (error === google.maps.GeocoderStatus.ZERO_RESULTS) {
-              marker = immutableSet(marker, '$geocodeError', error)
-              $applyDebounced()
-              return Promise.resolve(marker)
+            if (error.message === google.maps.GeocoderStatus.ZERO_RESULTS) {
+              error.marker = immutableSet(marker, {
+                $geocodeStatus: 'error',
+                $geocodeError: error.message
+              })
+              return Observable.of(error)
             } else {
-              $applyDebounced()
-              return Promise.reject(error)
+              error.marker = marker
+              return Observable.throw(error)
             }
           })
-        return Observable.fromPromise(promise)
       })
       .mergeAll()
 
-    operations.subscribe(marker => this.setMarker(marker), error => {})
+    operations.subscribe({
+      next: marker => {
+        this.setMarker(marker instanceof Error ? marker.marker : marker)
+      },
+      error: error => {
+        // Clear the pending status of any markers we didn't get to since the observable has stopped
+        this.markers.filter(({ $geocodeStatus }) => $geocodeStatus === 'pending')
+          .map(immutableCloneObject)
+          .forEach(marker => {
+            delete marker.$geocodeStatus
+            this.setMarker(marker)
+          })
+
+        this.addNotification({
+          type: 'danger',
+          title: 'Geocode error:',
+          content: error.message
+        })
+      }
+    })
 
     this.addNotification({
       component: 'geocode-progress',

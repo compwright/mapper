@@ -6,9 +6,12 @@ export default function observe(observable, total) {
 
   return Observable.create(progress => {
     observable.subscribe({
-      next: () => progress.next({ completed: ++completed, errors, total }),
-      catch: () => progress.next({ completed, errors: ++errors, total }),
-      completed: () => progress.completed()
+      next: (item) => {
+        (item instanceof Error) ? ++errors : ++completed
+        progress.next({ completed, errors, total })
+      },
+      error: (error) => progress.error(error),
+      complete: () => progress.complete()
     })
   })
 }
