@@ -18,3 +18,4 @@ Generate printable maps and lists from a list of addresses
 * AngularStrap v2.3
 * Bootstrap v3
 * Webpack v3
+* RxJS v5
