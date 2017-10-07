@@ -1,6 +1,6 @@
 {
   "name": "mapper",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Print a map with a list of destinations",
   "main": "app.js",
   "engines": {
