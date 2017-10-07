@@ -11,3 +11,11 @@ export const hasSomeKeys = (...keys) => obj => {
   }
   return false
 }
+
+export const addressFields = ['address', 'city', 'state', 'zip']
+export const coordinatesFields = ['lat', 'lng']
+
+export const hasAddress = hasAllKeys(...addressFields)
+export const hasSomeAddress = hasSomeKeys(...addressFields)
+
+export const hasCoordinates = hasAllKeys(...coordinatesFields)

@@ -1,5 +1,3 @@
-import debounce from 'lodash.debounce'
-
 export const bindings = {
   progress: '<'
 }
@@ -9,9 +7,7 @@ export const require = {
   $app: '^^app'
 }
 
-export function controller($rootScope, $timeout) {
-  const $applyDebounced = debounce($rootScope.$apply.bind($rootScope), 100)
-
+export function controller($timeout) {
   this.$onInit = () => {
     const subscription = this.progress.subscribe({
       next: ({ completed, errors, total }) => {
@@ -23,15 +19,16 @@ export function controller($rootScope, $timeout) {
           this.finished = true
           $timeout(() => this.$parent.close(), 2000)
         }
-        $applyDebounced()
+        this.$app.$applyDebounced()
       },
       error: (error) => {
         subscription.unsubscribe()
         this.$parent.close()
-        $applyDebounced()
+        this.$app.$applyDebounced()
       },
       complete: () => {
         this.finished = true
+        this.$app.$applyDebounced()
       }
     })
   }
@@ -42,7 +39,7 @@ export function controller($rootScope, $timeout) {
   }
 }
 
-controller.$inject = ['$rootScope', '$timeout']
+controller.$inject = ['$timeout']
 
 export const template = `
   <progress-bar ng-if="!$ctrl.error" style="width: 100%" value="$ctrl.value"></progress-bar>
