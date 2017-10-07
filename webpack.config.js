@@ -53,7 +53,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new ProvidePlugin({
-      Handsontable: 'handsontable/dist/handsontable.full'
+      Handsontable: 'ng-handsontable/node_modules/handsontable/dist/handsontable.full'
     }),
     extractSass,
     new HtmlWebpackPlugin({

@@ -31,7 +31,6 @@
     "compass-mixins": "^0.12.10",
     "core-js": "^2.5.1",
     "font-awesome-sass": "^4.7.0",
-    "handsontable": "^0.34.4",
     "lodash.debounce": "^4.0.8",
     "ng-handsontable": "^0.13.0",
     "ngmap": "^1.18.4",
