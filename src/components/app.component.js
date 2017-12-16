@@ -4,7 +4,8 @@ import immutableSet from '../utils/immutable/object/set'
 import ClusterManager from '../utils/cluster/manager'
 import MarkerCollection from '../utils/marker/collection'
 import MarkerGeocoder from '../utils/marker/geocoder'
-import { hasSomeAddress } from '../utils/validation'
+import { hasSomeAddress, hasCoordinates } from '../utils/validation'
+import densityClusterer from '../utils/cluster/density-clusterer'
 
 export function controller(geocoder, $rootScope) {
   this.markers = []
@@ -63,6 +64,11 @@ export function controller(geocoder, $rootScope) {
     })
   }
 
+  this.autoCluster = () => {
+    this.clusters = densityClusterer(this.markers.filter(hasCoordinates))
+    console.log(this.clusters)
+  }
+
   this.geocode = debounce(() => {
     const { length, operations } = markerGeocoder.geocode(markerCollection)
 
@@ -115,6 +121,9 @@ export const template = `
           </label>
         </div>
         <div class="navbar-btn pull-right" ng-show="$ctrl.state.step === 'cut'">
+          <button type="button" class="btn btn-default" ng-click="$ctrl.autoCluster()">
+            <i class="fa fa-dot-circle-o"></i> Auto-Cluster
+          </button>
           <button type="button" class="btn btn-default" ng-model="$ctrl.state.print"
               bs-checkbox ng-disabled="$ctrl.clusters.length === 0">
             <i class="fa fa-print"></i> Print Preview
